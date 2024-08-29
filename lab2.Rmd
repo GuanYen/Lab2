@@ -1,0 +1,81 @@
+---
+title: "Lab2"
+author: "Jason Chen"
+date: "2024-08-29"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+```{r}
+  getwd()
+```
+# Task 2
+```{r}
+  epagas <- read.csv("EPAGAS.csv")
+  head(epagas)
+```
+# Task 3
+  Make the object mpg, the number of miles per gallon vector
+```{r}
+  mpg <-epagas$MPG
+  head(mpg)
+```
+  Transform mpg variable to z and verify these results
+```{r}
+  z <- (mpg - mean(mpg)) / sd(mpg)
+  head(z)
+  print(paste0("mean = ", round(mean(z), digits = 4)), quote =               FALSE)
+  print(paste0("variance = ", var(z)), quote = FALSE)
+  print(paste0("standard deviation = ", sd(z)), quote = FALSE)
+```
+  Using z, find values of mpg that are possible outliers
+```{r}
+  mpg[abs(z)>=2 & abs(z)<=3]
+```
+  Using z, find the values of mpg that are defined as outliers
+```{r}
+  mpg[abs(z)>3]
+```
+  Using the lattice package, construct a dotplot with colors
+```{r}
+  library(lattice)
+  mycol = ifelse(abs(z)>3, "Red",
+        ifelse(abs(z)>=2 &abs(z)<=3,"Blue", "Black"))
+  dotplot(z, col=mycol)
+```
+# Task 4
+  Make a boxplot of the mpg variable
+    - Make the box black
+    - Put a notch where the median goes
+    - Put a title on the graph
+    - Make the plot horizontal
+```{r}
+  boxplot(mpg, main="MPG Values", xlab = "MPG", col = "BLACK", horizontal = TRUE, notch = TRUE)
+```
+  Chebyshev's Rule says that at least (1 - 1/k^2) of the              measurements will fall within k standard deviations of the mean.
+```{r}
+  k = 2
+  cheb <- 1 - 1 / (k ^ 2)
+  cheb
+```
+  Exact proportion within 2 standard deviations of the mean of mpg
+```{r}
+  exact <- length(mpg[abs(z < 2)]) / length(mpg)
+  exact
+```
+  The Empirical Rule says that approximately 95% of the measurements   will lie within 2 standard deviations of the their mean given the dataset has an approximately mound-shaped, symmetric distribution.
+  
+  The Empirical Rule is very close because it states 95% will be      within 2 standard deviations while the exact proportion is 98%.
+  
+  The Empirical Rule is valid in this case because the dataset       looks symmetrical and mound-shaped.
+```{r}
+  densityplot(mpg)
+```
+
